@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-document-validator"
+rootProject.name = "kotlin-dsl-document-validator"

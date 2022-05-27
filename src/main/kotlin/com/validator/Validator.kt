@@ -3,32 +3,75 @@ package com.validator
 import kotlin.reflect.KProperty1
 
 sealed class ValidationResult<Constraint>
-class Passed<Constraint> : ValidationResult<Constraint>()
-class Failed<Constraint>(val errors: Set<Constraint>) : ValidationResult<Constraint>()
+class Passed<Result> : ValidationResult<Result>()
+class Failed<Result>(val errors: Result) : ValidationResult<Result>()
 
-class Validator<Subject, Constraint> private constructor(private val subject: Subject) {
+class Validator<Subject, Constraint : Any> private constructor(private val subject: Subject) {
 
-    private val failures = mutableSetOf<Constraint>()
+    private val constraints = mutableListOf<Pair<Constraint, () -> Boolean>>()
 
-    /**
-     * Initialize a [Validator] with the given subject on which all the constraint checks in the
-     * given block are performed. Its [ValidationResult] are returned subsequently.
-     */
     companion object {
-        fun <Subject, Constraint> check(
+
+        /**
+         * Initialize an eager [Validator], which runs all checks and returns all failures that
+         * occurred, including duplicates.
+         */
+        fun <Subject : Any, Constraint : Any> checkEagerly(
+            subject: Subject,
+            block: Validator<Subject, Constraint>.(Subject) -> Unit,
+        ): ValidationResult<List<Constraint>> {
+            val validator = Validator<Subject, Constraint>(subject)
+            validator.block(subject)
+            val result = validator.eagerConstraintFailures()
+            return allResults(result)
+        }
+
+        private fun <Constraint> allResults(failures: List<Constraint>): ValidationResult<List<Constraint>> =
+            if (failures.isNotEmpty()) {
+                Failed(failures)
+            } else {
+                Passed()
+            }
+
+        /**
+         * Initialize a lazy [Validator], which runs checks from the top down and returns the
+         * first failure to occur. This method can be useful for constraint checks that have a
+         * high time complexity, as the remaining checks are not performed after a failure has
+         * occurred.
+         */
+        fun <Subject : Any, Constraint : Any> checkLazily(
             subject: Subject,
             block: Validator<Subject, Constraint>.(Subject) -> Unit,
         ): ValidationResult<Constraint> {
             val validator = Validator<Subject, Constraint>(subject)
             validator.block(subject)
-            return validator.result()
+            val failure = validator.lazyConstraintFailure()
+            return result(failure)
         }
+
+        private fun <Constraint> result(failure: Constraint?): ValidationResult<Constraint> =
+            if (failure != null) {
+                Failed(failure)
+            } else {
+                Passed()
+            }
     }
 
     /**
-     * Performs the constraint checks in the given block on a single property of the current subject,
-     * which may be of any type. Calls to this method may be nested as to walk through all
-     * underlying nested properties.
+     * Performs the constraint checks in the given block on the complete subject which can
+     * be destructured.
+     */
+    fun checkSubject(
+        block: Validator<Subject, Constraint>.(Subject) -> Unit,
+    ) {
+        val validator = Validator<Subject, Constraint>(subject)
+        validator.block(subject)
+        constraints += validator.constraints
+    }
+
+    /**
+     * Performs the constraint checks in the given block on a single property of the current
+     * subject.
      */
     fun <Property> checkProperty(
         property: KProperty1<Subject, Property>,
@@ -37,15 +80,13 @@ class Validator<Subject, Constraint> private constructor(private val subject: Su
         property.get(subject).also {
             val validator = Validator<Property, Constraint>(it)
             validator.block(it)
-            failures += validator.failures
+            constraints += validator.constraints
         }
     }
 
     /**
-     * Performs the constraint checks in the given block on a single property of the current subject,
-     * which must be of type [Iterable]. This allows performing checks on [Iterable] while writing
-     * constraints as if a single value is validated. Calls to this method may be nested to walk
-     * through the all underlying nested properties.
+     * Performs the constraint checks in the given block on a single [Iterable] property of
+     * the current subject. This allows performing checks as if a single value is validated.
      */
     fun <Property> checkIterableProperty(
         property: KProperty1<Subject, Iterable<Property>>,
@@ -54,27 +95,24 @@ class Validator<Subject, Constraint> private constructor(private val subject: Su
         property.get(subject).forEach {
             val validator = Validator<Property, Constraint>(it)
             validator.block(it)
-            failures += validator.failures
+            constraints += validator.constraints
         }
     }
 
     /**
-     * Add a constraint to this [Validator], which is memorized as failed when the subject does not
-     * meet the given predicate, otherwise it is ignored.
+     * Add a [Constraint] to this [Validator].
      */
-    fun forConstraint(constraint: Constraint, predicate: (Subject) -> Boolean) {
-        if (!predicate(subject)) {
-            failures += constraint
-        }
+    infix fun Constraint.enforcing(predicate: () -> Boolean) {
+        constraints.add(Pair(this, predicate))
     }
 
-    /**
-     * Retrieve the [ValidationResult] of this [Validator].
-     */
-    fun result(): ValidationResult<Constraint> =
-        if (failures.isNotEmpty()) {
-            Failed(failures)
-        } else {
-            Passed()
-        }
+    private fun eagerConstraintFailures(): List<Constraint> =
+        constraints
+            .filter { (_, predicate) -> !predicate() }
+            .map { (constraint, _) -> constraint }
+
+    private fun lazyConstraintFailure(): Constraint? =
+        constraints
+            .firstOrNull { (_, predicate) -> !predicate() }
+            .let { it?.first }
 }
