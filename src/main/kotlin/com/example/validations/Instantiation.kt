@@ -12,7 +12,6 @@ fun validateEagerly(document: Document): ValidationResult<List<String>> =
         // ...
     }
 
-
 fun validateLazily(document: Document): ValidationResult<String> =
 
     checkLazily(document) {

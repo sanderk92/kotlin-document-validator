@@ -11,13 +11,13 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/c8d8d1f77f4741a0
 
 Then we must instantiate a validator:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/c8d8d1f77f4741a096684c9d78fff622823cb46e/src/main/kotlin/com/example/validations/Instantiation.kt#L8-L12
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/c8d8d1f77f4741a096684c9d78fff622823cb46e/src/main/kotlin/com/example/validations/Instantiation.kt#L9-L13
 
 <sup>*Returns all errors that occurred, including duplicates<sup>
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/c8d8d1f77f4741a096684c9d78fff622823cb46e/src/main/kotlin/com/example/validations/Instantiation.kt#L15-L19
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/c8d8d1f77f4741a096684c9d78fff622823cb46e/src/main/kotlin/com/example/validations/Instantiation.kt#L16-L20
 
-<sup>*Returns the first error that occurred<sup>
+<sup>*Returns the first error that occurred and skips evaluation of remaining predicates<sup>
 
 ## Validation
 

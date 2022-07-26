@@ -2,13 +2,11 @@ package com.validator
 
 import kotlin.reflect.KProperty1
 
-sealed class ValidationResult<Constraint>
-class Passed<Result> : ValidationResult<Result>()
-class Failed<Result>(val errors: Result) : ValidationResult<Result>()
+private typealias ConstraintPredicate = () -> Boolean
 
 class Validator<Subject, Constraint : Any> private constructor(private val subject: Subject) {
 
-    private val constraints = mutableListOf<Pair<Constraint, () -> Boolean>>()
+    private val constraints = mutableListOf<Pair<Constraint, ConstraintPredicate>>()
 
     companion object {
 
@@ -36,7 +34,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
         /**
          * Initialize a lazy [Validator], which runs checks from the top down and returns the
          * first failure to occur. This method can be useful for constraint checks that have a
-         * high time complexity, as the remaining checks are not performed after a failure has
+         * high time complexity, as it skips evaluation of remaining predicates when an error
          * occurred.
          */
         fun <Subject : Any, Constraint : Any> checkLazily(
@@ -58,8 +56,8 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Performs the constraint checks in the given block on the complete subject which can
-     * be destructured.
+     * Performs the constraint checks in the given block on the complete subject, which can
+     * optionally be destructured.
      */
     fun checkSubject(
         block: Validator<Subject, Constraint>.(Subject) -> Unit,
@@ -102,7 +100,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     /**
      * Add a [Constraint] to this [Validator].
      */
-    infix fun Constraint.enforcing(predicate: () -> Boolean) {
+    infix fun Constraint.enforcing(predicate: ConstraintPredicate) {
         constraints.add(Pair(this, predicate))
     }
 
