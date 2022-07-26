@@ -23,7 +23,7 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/eae3d61f447ea29e
 
 #### All properties
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/eae3d61f447ea29ecbbaa75b5719e8d382d55f45/src/main/kotlin/com/example/validations/ValidationExampleWithSubject.kt#L9-L24
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/eae3d61f447ea29ecbbaa75b5719e8d382d55f45/src/main/kotlin/com/example/validations/ValidationExampleWithSubject.kt#L9-L23
 
 #### Single property
 
@@ -35,7 +35,7 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/eae3d61f447ea29e
 
 #### Nested properties
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/eae3d61f447ea29ecbbaa75b5719e8d382d55f45/src/main/kotlin/com/example/validations/ValidationExampleWithNestedProperties.kt#L9-L25
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/eae3d61f447ea29ecbbaa75b5719e8d382d55f45/src/main/kotlin/com/example/validations/ValidationExampleWithNestedProperties.kt#L9-L26
 
 ## Custom constraint types
 
