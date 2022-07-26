@@ -15,7 +15,7 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4551dd852da47968
 
 <sup>*Returns all errors that occurred, including duplicates<sup>
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4551dd852da47968d5b959bac5b3ac85e3086a0b/src/main/kotlin/com/example/validations/Instantiation.kt#L16-L20
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4551dd852da47968d5b959bac5b3ac85e3086a0b/src/main/kotlin/com/example/validations/Instantiation.kt#L15-L19
 
 <sup>*Returns the first error that occurred and skips evaluation of remaining predicates<sup>
 
