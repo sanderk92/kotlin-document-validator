@@ -19,7 +19,6 @@ class ValidationExampleWithSubject {
                 "The content field must not be empty" enforcing {
                     content.isNotEmpty()
                 }
-
             }
         }
 }
