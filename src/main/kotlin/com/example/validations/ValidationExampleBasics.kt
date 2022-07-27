@@ -7,9 +7,9 @@ import java.util.*
 
 class ValidationExampleBasics {
 
-    fun validate(document: Document): ValidationResult<List<String>> =
+    fun validate(subject: Document): ValidationResult<List<String>> =
 
-        checkEagerly(document) {
+        checkEagerly(subject) { document ->
 
             "The owner field may not be empty" enforcing {
                 document.owner.isNotEmpty()
