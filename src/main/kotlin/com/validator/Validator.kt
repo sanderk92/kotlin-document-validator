@@ -98,10 +98,19 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Add a [Constraint] to this [Validator].
+     * Add a [Constraint] to this [Validator], which will result in a failure if the given
+     * predicate returns a false, or a success if true.
      */
     infix fun Constraint.enforcing(predicate: ConstraintPredicate) {
         constraints.add(Pair(this, predicate))
+    }
+
+    /**
+     * Add a [Constraint] to this [Validator], which will result in a failure if an exception
+     * is thrown, or a success if none thrown.
+     */
+    infix fun Constraint.trying(block: () -> Unit) {
+        constraints.add(Pair(this) { runCatching { block() }.isSuccess })
     }
 
     private fun eagerConstraintFailures(): List<Constraint> =
