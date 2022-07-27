@@ -11,15 +11,12 @@ class ValidationExampleBasics {
 
         checkEagerly(document) {
 
-            checkProperty(Document::owner) { owner ->
+            "The owner field may not be empty" enforcing {
+                document.owner.isNotEmpty()
+            }
 
-                "The owner field may not be empty" enforcing {
-                    owner.isNotEmpty()
-                }
-
-                "The owner field must be a valid UUID" trying {
-                    UUID.fromString(owner)
-                }
+            "The owner field must be a valid UUID" trying {
+                UUID.fromString(document.owner)
             }
         }
 }
