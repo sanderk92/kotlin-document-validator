@@ -11,11 +11,11 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a
 
 Then we must instantiate a validator:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a11f27de84dc7f2461a7d3a65/src/main/kotlin/com/example/validations/Instantiation.kt#L9-L13
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a11f27de84dc7f2461a7d3a65/src/main/kotlin/com/example/validations/Instantiation.kt#L10-L12
 
 <sup>*Returns all errors that occurred<sup>
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a11f27de84dc7f2461a7d3a65/src/main/kotlin/com/example/validations/Instantiation.kt#L15-L19
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a11f27de84dc7f2461a7d3a65/src/main/kotlin/com/example/validations/Instantiation.kt#L16-L18
 
 <sup>*Returns the first error that occurred and skips evaluation of remaining predicates<sup>
 
@@ -26,11 +26,13 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a
 Properties can be checked for whether they fulfill a predicate:
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a11f27de84dc7f2461a7d3a65/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L14-L16
+
 ### Trying
 
 Properties can be checked for whether an operation on them, i.e. a parse, will result in an exception:
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a11f27de84dc7f2461a7d3a65/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L18-L20
+
 ## Property accessors
 
 Property accessors allow us to structure our validator and perform constraint checks on specific properties:
