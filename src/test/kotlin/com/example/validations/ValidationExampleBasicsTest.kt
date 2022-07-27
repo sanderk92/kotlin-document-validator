@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class ValidationExampleWithTryingTest {
+class ValidationExampleBasicsTest {
 
     @Test
     fun `Owners with non-UUID conforming values are not allowed`() {
@@ -16,7 +16,7 @@ class ValidationExampleWithTryingTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleWithTrying().validate(document)
+        val result = ValidationExampleBasics().validate(document)
 
         Assertions.assertThat(result).isExactlyInstanceOf(Failed::class.java)
         Assertions.assertThat((result as Failed).errors).containsExactly(
@@ -31,7 +31,7 @@ class ValidationExampleWithTryingTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleWithTrying().validate(document)
+        val result = ValidationExampleBasics().validate(document)
 
         Assertions.assertThat(result).isExactlyInstanceOf(Passed::class.java)
     }
