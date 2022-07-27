@@ -36,11 +36,11 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/87bc570cc2973b4d
 
 #### All properties
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/87bc570cc2973b4d0e2b84fc8560133f6bafbb43/src/main/kotlin/com/example/validations/ValidationExampleWithSubject.kt#L9-L20
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/87bc570cc2973b4d0e2b84fc8560133f6bafbb43/src/main/kotlin/com/example/validations/ValidationExampleWithSubject.kt#L9-L19
 
 #### Single property
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/87bc570cc2973b4d0e2b84fc8560133f6bafbb43/src/main/kotlin/com/example/validations/ValidationExampleWithSingleProperty.kt#L9-L20
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/87bc570cc2973b4d0e2b84fc8560133f6bafbb43/src/main/kotlin/com/example/validations/ValidationExampleWithSingleProperty.kt#L9-L19
 
 #### Iterable properties
 
@@ -48,7 +48,7 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/87bc570cc2973b4d
 
 #### Nested properties
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/87bc570cc2973b4d0e2b84fc8560133f6bafbb43/src/main/kotlin/com/example/validations/ValidationExampleWithNestedProperties.kt#L9-L23
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/87bc570cc2973b4d0e2b84fc8560133f6bafbb43/src/main/kotlin/com/example/validations/ValidationExampleWithNestedProperties.kt#L9-L22
 
 ## Custom constraint types
 
