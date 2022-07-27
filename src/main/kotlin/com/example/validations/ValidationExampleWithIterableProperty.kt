@@ -13,7 +13,7 @@ class ValidationExampleWithIterableProperty {
             checkIterableProperty(Document::content) { element ->
 
                 "The content field must contain only positive values" enforcing {
-                    element >= 0
+                    element > 0
                 }
             }
         }
