@@ -21,6 +21,19 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597
 
 ## Validation
 
+### Enforcing
+
+Properties can be checked for whether they fulfill a predicate:
+
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/2c95c104611da2fa3f058ed5629301031b7366ff/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L16-L18
+
+### Trying
+
+Properties can be checked for whether an operation on them, i.e. a parse, will result in an exception:
+
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/2c95c104611da2fa3f058ed5629301031b7366ff/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L20-L22
+## Property accessors
+
 #### All properties
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597e42be3cec1ad60f8715f1ea9/src/main/kotlin/com/example/validations/ValidationExampleWithSubject.kt#L9-L23
@@ -41,12 +54,4 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597
 
 Property checks can be given additional failure context:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597e42be3cec1ad60f8715f1ea9/src/main/kotlin/com/example/ExampleConstraint.kt#L3-L11
-
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597e42be3cec1ad60f8715f1ea9/src/main/kotlin/com/example/validations/ValidationExampleWithCustomConstraintType.kt#L12-L22
-
-## Try (parse)
-
-Properties can be checked for whether an operation, i.e. a parse, will result in an exception:
-
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597e42be3cec1ad60f8715f1ea9/src/main/kotlin/com/example/validations/ValidationExampleWithTrying.kt#L12-L20
