@@ -3,13 +3,13 @@ An easy to use DSL for validating the content of any document.
 
 ## Instructions
 
-First we define an arbitrary Document class:
+First we define an arbitrary `Document` class:
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a11f27de84dc7f2461a7d3a65/src/main/kotlin/com/example/ExampleDocument.kt#L3-L6
 
 ## Instantiate a validator
 
-Then we must instantiate a validator:
+Then we must instantiate a `Validator`:
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a11f27de84dc7f2461a7d3a65/src/main/kotlin/com/example/validations/Instantiation.kt#L10-L12
 
@@ -35,7 +35,7 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/31dc51fc7fd0704a
 
 ## Property accessors
 
-Property accessors allow us to structure our validator and perform constraint checks on specific properties:
+Property accessors allow us to structure our `Validator` and perform constraint checks on specific properties:
 
 #### All properties
 
