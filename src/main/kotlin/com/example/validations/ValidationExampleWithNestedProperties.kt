@@ -12,10 +12,6 @@ class ValidationExampleWithNestedProperties {
 
             checkProperty(Document::owner) { owner ->
 
-                "The owner field must not be empty or blank" enforcing {
-                    owner.isNotBlank()
-                }
-
                 checkProperty(String::length) { length ->
 
                     "The owner field must not be longer than 10 characters" enforcing {

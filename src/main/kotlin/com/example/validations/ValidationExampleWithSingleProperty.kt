@@ -15,10 +15,6 @@ class ValidationExampleWithSingleProperty {
                 "The owner field must be at minimum three characters" enforcing {
                     owner.length >= 3
                 }
-
-                "The owner field must be at maximum ten characters" enforcing {
-                    owner.length <= 10
-                }
             }
         }
 }

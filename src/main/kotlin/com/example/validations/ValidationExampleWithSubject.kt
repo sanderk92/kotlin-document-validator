@@ -10,14 +10,10 @@ class ValidationExampleWithSubject {
 
         checkEagerly(document) {
 
-            checkSubject { (owner, content) ->
+            checkSubject { (owner, _) ->
 
                 "The owner field must not be empty or blank" enforcing {
                     owner.isNotBlank()
-                }
-
-                "The content field must not be empty" enforcing {
-                    content.isNotEmpty()
                 }
             }
         }
