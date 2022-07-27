@@ -55,3 +55,9 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597
 Property checks can be given additional failure context:
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597e42be3cec1ad60f8715f1ea9/src/main/kotlin/com/example/validations/ValidationExampleWithCustomConstraintType.kt#L12-L22
+
+## Validation result
+
+A ValidationResult can be used in pattern matching and contains a few helper functions in case multiple results are returned:
+
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/dd8a4039423a07b6ba83467ded131045064c6b08/src/main/kotlin/com/example/validations/ValidationResultUsage.kt#L8-L18
