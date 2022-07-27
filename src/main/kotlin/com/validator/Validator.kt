@@ -24,7 +24,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
             return allResults(result)
         }
 
-        private fun <Constraint> allResults(failures: List<Constraint>): ValidationResult<List<Constraint>> =
+        private fun <Constraint: Any> allResults(failures: List<Constraint>): ValidationResult<List<Constraint>> =
             if (failures.isNotEmpty()) {
                 Failed(failures)
             } else {
@@ -47,7 +47,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
             return result(failure)
         }
 
-        private fun <Constraint> result(failure: Constraint?): ValidationResult<Constraint> =
+        private fun <Constraint: Any> result(failure: Constraint?): ValidationResult<Constraint> =
             if (failure != null) {
                 Failed(failure)
             } else {
