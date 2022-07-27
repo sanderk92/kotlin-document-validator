@@ -25,21 +25,6 @@ class ValidationExampleWithSinglePropertyTest {
     }
 
     @Test
-    fun `Owners with too long names are not allowed`() {
-        val document = Document(
-            owner = "abcdefghijklmnopqrstuvwxyz",
-            content = emptyList(),
-        )
-
-        val result = ValidationExampleWithSingleProperty().validate(document)
-
-        assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        assertThat((result as Failed).errors).containsExactly(
-            "The owner field must be at maximum ten characters",
-        )
-    }
-
-    @Test
     fun `Owners with valid name are allowed`() {
         val document = Document(
             owner = "Jason",

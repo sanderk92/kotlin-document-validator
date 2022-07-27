@@ -21,19 +21,4 @@ class ValidationExampleWithSubjectTest {
             "The owner field must not be empty or blank"
         )
     }
-
-    @Test
-    fun `Empty content is not allowed`() {
-        val document = Document(
-            owner = "Frank",
-            content = emptyList(),
-        )
-
-        val result = ValidationExampleWithSubject().validate(document)
-
-        Assertions.assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        Assertions.assertThat((result as Failed).errors).containsExactly(
-            "The content field must not be empty"
-        )
-    }
 }

@@ -9,21 +9,6 @@ import org.junit.jupiter.api.Test
 class ValidationExampleWithNestedPropertiesTest {
 
     @Test
-    fun `Owners with empty names are not allowed`() {
-        val document = Document(
-            owner = "",
-            content = emptyList(),
-        )
-
-        val result = ValidationExampleWithNestedProperties().validate(document)
-
-        assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        assertThat((result as Failed).errors).containsExactly(
-            "The owner field must not be empty or blank"
-        )
-    }
-
-    @Test
     fun `Owners with too long names are not allowed`() {
         val document = Document(
             owner = "abcdefghijklmnopqrstuvwxyz",
