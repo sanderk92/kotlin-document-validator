@@ -43,7 +43,7 @@ Property checks can be given additional failure context:
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597e42be3cec1ad60f8715f1ea9/src/main/kotlin/com/example/ExampleConstraint.kt#L3-L11
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597e42be3cec1ad60f8715f1ea9/src/main/kotlin/com/example/validations/ValidationExampleWithCustomConstraintType.kt#L11-L21
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/4ea6af0c4d21e597e42be3cec1ad60f8715f1ea9/src/main/kotlin/com/example/validations/ValidationExampleWithCustomConstraintType.kt#L12-L22
 
 ## Try (parse)
 
