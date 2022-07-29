@@ -1,6 +1,6 @@
 package com.validator
 
-sealed interface ValidationResult<Constraint>
+sealed interface ValidationResult<Result>
 class Passed<Result> : ValidationResult<Result>
 data class Failed<Result: Any>(val errors: Result) : ValidationResult<Result>
 

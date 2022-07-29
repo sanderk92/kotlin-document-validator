@@ -29,7 +29,7 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/862609bc8887cb18
 
 ### Trying
 
-Properties can be checked for whether an operation on them, i.e. a parse, will result in an exception:
+Properties can be checked for whether an operation on them will result in an exception:
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/862609bc8887cb18182a10c73b4fbb9df1daf793/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L18-L20
 
