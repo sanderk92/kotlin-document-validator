@@ -18,5 +18,9 @@ class ValidationExampleBasics {
             "The owner field must be a valid UUID" trying {
                 UUID.fromString(document.owner)
             }
+
+            "The content field may not be empty" ignoring {
+                document.content.isEmpty()
+            }
         }
 }

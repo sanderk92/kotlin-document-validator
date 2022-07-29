@@ -20,7 +20,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
         ): ValidationResult<List<Constraint>> {
             val validator = Validator<Subject, Constraint>(subject)
             validator.block(subject)
-            val result = validator.eagerConstraintFailures()
+            val result = validator.evaluateEagerly()
             return allResults(result)
         }
 
@@ -43,7 +43,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
         ): ValidationResult<Constraint> {
             val validator = Validator<Subject, Constraint>(subject)
             validator.block(subject)
-            val failure = validator.lazyConstraintFailure()
+            val failure = validator.evaluateLazily()
             return result(failure)
         }
 
@@ -98,28 +98,37 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Add a [Constraint] to this [Validator], which will result in a failure if the given
-     * predicate returns a false, or a success if true.
+     * Add a [Constraint] which results in a failure if the given predicate results in a false.
      */
     infix fun Constraint.enforcing(predicate: ConstraintPredicate) {
-        constraints.add(Pair(this, predicate))
+        addConstraint(this, predicate)
     }
 
     /**
-     * Add a [Constraint] to this [Validator], which will result in a failure if an exception
-     * is thrown, or a success if none thrown.
+     * Add a [Constraint] which results in is a failure if the given block throws an exception.
      */
     infix fun Constraint.trying(block: () -> Unit) {
-        constraints.add(Pair(this) { runCatching { block() }.isSuccess })
+        addConstraint(this) { runCatching { block() }.isSuccess }
     }
 
-    private fun eagerConstraintFailures(): List<Constraint> =
+    /**
+     * Add a [Constraint] which will never result in a failure.
+     */
+    infix fun Constraint.ignoring(block: () -> Unit) {
+        addConstraint(this) { block(); true }
+    }
+
+    private fun evaluateEagerly(): List<Constraint> =
         constraints
             .filter { (_, predicate) -> !predicate() }
             .map { (constraint, _) -> constraint }
 
-    private fun lazyConstraintFailure(): Constraint? =
+    private fun evaluateLazily(): Constraint? =
         constraints
             .firstOrNull { (_, predicate) -> !predicate() }
             .let { it?.first }
+
+    private fun addConstraint(constraint: Constraint, predicate: ConstraintPredicate) {
+        constraints.add(Pair(constraint, predicate))
+    }
 }

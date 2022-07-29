@@ -11,6 +11,19 @@ import org.junit.jupiter.api.Test
 class ValidationExampleWithCustomConstraintTypeTest {
 
     @Test
+    fun `Valid documents pass`() {
+        val document = Document(
+            owner = "Frank",
+            content = emptyList(),
+        )
+
+        val result = ValidationExampleWithCustomConstraintType().validate(document)
+
+        assertThat(result).isExactlyInstanceOf(Passed::class.java)
+    }
+
+
+    @Test
     fun `Owners with empty name are not allowed`() {
         val document = Document(
             owner = "",
@@ -20,21 +33,8 @@ class ValidationExampleWithCustomConstraintTypeTest {
         val result = ValidationExampleWithCustomConstraintType().validate(document)
 
         assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        assertThat((result as Failed).errors).containsExactly(
+        assertThat((result as Failed).errors).containsExactlyInAnyOrder(
             Constraint("The owner field must not be empty or blank", ErrorCode.E001)
         )
-    }
-
-
-    @Test
-    fun `Owners with non-empty name is allowed`() {
-        val document = Document(
-            owner = "Frank",
-            content = emptyList(),
-        )
-
-        val result = ValidationExampleWithCustomConstraintType().validate(document)
-
-        assertThat(result).isExactlyInstanceOf(Passed::class.java)
     }
 }
