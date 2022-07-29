@@ -35,7 +35,7 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/862609bc8887cb18
 
 ### Ignoring
 
-Properties can be checked but the results ignored. Useful for i.e. logging.
+Properties can be checked but the result ignored:
 
 https://github.com/sanderk92/kotlin-dsl-document-validator/blob/862609bc8887cb18182a10c73b4fbb9df1daf793/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L22-L24
 
