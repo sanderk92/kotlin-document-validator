@@ -43,7 +43,7 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce
 
 A validation definition as described above can immediately have its result peeked on:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleLogging.kt#L13-L19
+https://github.com/sanderk92/kotlin-dsl-document-validator/blob/2276f593c1bf4aa7fa738cfa40822c26e4102aed/src/main/kotlin/com/example/validations/VaildationExampleWithLogging.kt#L13-L19
 
 <sup>*Adds an execution of the check for each peek<sup>
 
