@@ -83,8 +83,8 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Performs the constraint checks in the given block on a single [Iterable] property of
-     * the current subject. This allows performing checks as if a single value is validated.
+     * Performs the constraint checks in the given block on a single [Iterable] property of the
+     * current subject. This allows performing checks as if a single value is validated.
      */
     fun <Property> checkIterableProperty(
         property: KProperty1<Subject, Iterable<Property>>,
@@ -98,25 +98,25 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Defines a validation which adds a failure to the result when the given predicate returns false.
+     * Defines a validation which is a failure when the given predicate returns false.
      */
     infix fun Constraint.enforcing(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> =
         constraints.addPair(this, predicate)
 
     /**
-     * Defines a validation which adds a failure to the result when the given block throws an exception.
+     * Defines a validation which is a failure when the given block throws an exception.
      */
     infix fun Constraint.trying(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
         constraints.addPair(this) { runCatching { block() }.isSuccess }
 
     /**
-     * Defines a validation which never adds a failure to the result.
+     * Defines a validation which never results in a failure.
      */
     infix fun Constraint.ignoring(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> =
         constraints.addPair(this) { true }.let { this to predicate }
 
     private fun <A, B> MutableList<Pair<A, B>>.addPair(a: A, b: B): Pair<A, B> =
-        (a to b).also(this::add)
+        (a to b).also(::add)
 
     /**
      * Peeks a validation definition, immediately executing it and running the block if it passed.
