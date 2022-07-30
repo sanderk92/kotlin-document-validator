@@ -98,38 +98,37 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Define a validation which adds a failure to the result when the given predicate returns false.
+     * Defines a validation which adds a failure to the result when the given predicate returns false.
      */
     infix fun Constraint.enforcing(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> =
-        constraints + (this to predicate)
+        constraints.addPair(this, predicate)
 
     /**
-     * Define a validation which adds a failure to the result when the given block throws an exception.
+     * Defines a validation which adds a failure to the result when the given block throws an exception.
      */
     infix fun Constraint.trying(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
-        constraints + (this to { runCatching { block() }.isSuccess })
+        constraints.addPair(this) { runCatching { block() }.isSuccess }
 
     /**
-     * Define a validation which never adds a failure to the result.
+     * Defines a validation which never adds a failure to the result.
      */
-    infix fun Constraint.ignoring(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> {
-        constraints + (this to { true })
-        return this to predicate
-    }
+    infix fun Constraint.ignoring(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> =
+        constraints.addPair(this) { true }.let { this to predicate }
+
+    private fun <A, B> MutableList<Pair<A, B>>.addPair(a: A, b: B): Pair<A, B> =
+        (a to b).also(this::add)
 
     /**
-     * Peek a validation definition and immediately execute the block if it will pass.
+     * Peeks a validation definition, immediately executing it and running the block if it passed.
      */
-    infix fun Pair<Constraint, ConstraintPredicate>.onPass(block: () -> Unit): Pair<Constraint, ConstraintPredicate> {
-        if (second()) block(); return this
-    }
+    infix fun Pair<Constraint, ConstraintPredicate>.onPass(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
+        also { if (second()) block() }
 
     /**
-     * Peek a validation definition and immediately execute the block if it will fail.
+     * Peeks a validation definition, immediately executing it and running the block if it failed.
      */
-    infix fun Pair<Constraint, ConstraintPredicate>.onFail(block: () -> Unit): Pair<Constraint, ConstraintPredicate> {
-        if (!second()) block(); return this
-    }
+    infix fun Pair<Constraint, ConstraintPredicate>.onFail(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
+        also { if (!second()) block() }
 
     private fun evaluateEagerly(): List<Constraint> =
         constraints
@@ -142,5 +141,3 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
             .let { it?.first }
 }
 
-private operator fun <A, B> MutableList<Pair<A, B>>.plus(constraint: Pair<A, B>) =
-    this.add(constraint).let { constraint }
