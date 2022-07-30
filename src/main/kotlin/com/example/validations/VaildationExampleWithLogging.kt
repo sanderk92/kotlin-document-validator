@@ -10,7 +10,7 @@ class ValidationExampleLogging {
 
         checkEagerly(subject) { document ->
 
-            "The content field may not be empty" ignoring {
+            "The content field may not be empty" enforcing {
                 document.content.isNotEmpty()
             } onPass {
                 println("The content field was not empty!")

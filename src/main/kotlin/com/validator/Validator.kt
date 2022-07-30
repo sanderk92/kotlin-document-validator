@@ -98,19 +98,19 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Constraint appending a failure to the result when the given predicate returns false.
+     * Define a validation which adds a failure to the result when the given predicate returns false.
      */
     infix fun Constraint.enforcing(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> =
         constraints + (this to predicate)
 
     /**
-     * Constraint appending a failure to the result when the given block throws an exception.
+     * Define a validation which adds a failure to the result when the given block throws an exception.
      */
     infix fun Constraint.trying(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
         constraints + (this to { runCatching { block() }.isSuccess })
 
     /**
-     * Constraint that never appends a failure to the result.
+     * Define a validation which never adds a failure to the result.
      */
     infix fun Constraint.ignoring(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> {
         constraints + (this to { true })
@@ -118,14 +118,14 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Immediately executes the block if the added constraint is a success
+     * Peek a validation definition and immediately execute the block if it will pass.
      */
     infix fun Pair<Constraint, ConstraintPredicate>.onPass(block: () -> Unit): Pair<Constraint, ConstraintPredicate> {
         if (second()) block(); return this
     }
 
     /**
-     * Immediately executes the block if the added constraint is a failure
+     * Peek a validation definition and immediately execute the block if it will fail.
      */
     infix fun Pair<Constraint, ConstraintPredicate>.onFail(block: () -> Unit): Pair<Constraint, ConstraintPredicate> {
         if (!second()) block(); return this
