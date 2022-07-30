@@ -11,7 +11,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     companion object {
 
         /**
-         * Initialize an eager [Validator], which runs all checks and returns all failures that
+         * Initializes an eager [Validator], which runs all checks and returns all failures that
          * occurred, including duplicates.
          */
         fun <Subject : Any, Constraint : Any> checkEagerly(
@@ -20,11 +20,11 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
         ): ValidationResult<List<Constraint>> {
             val validator = Validator<Subject, Constraint>(subject)
             validator.block(subject)
-            val result = validator.evaluateEagerly()
-            return allResults(result)
+            val failures = validator.evaluateEagerly()
+            return result(failures)
         }
 
-        private fun <Constraint: Any> allResults(failures: List<Constraint>): ValidationResult<List<Constraint>> =
+        private fun <Constraint : Any> result(failures: List<Constraint>): ValidationResult<List<Constraint>> =
             if (failures.isNotEmpty()) {
                 Failed(failures)
             } else {
@@ -32,7 +32,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
             }
 
         /**
-         * Initialize a lazy [Validator], which runs checks from the top down and returns the
+         * Initializes a lazy [Validator], which runs checks from the top down and returns the
          * first failure to occur. This method can be useful for constraint checks that have a
          * high time complexity, as it skips evaluation of remaining predicates when an error
          * occurred.
@@ -47,7 +47,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
             return result(failure)
         }
 
-        private fun <Constraint: Any> result(failure: Constraint?): ValidationResult<Constraint> =
+        private fun <Constraint : Any> result(failure: Constraint?): ValidationResult<Constraint> =
             if (failure != null) {
                 Failed(failure)
             } else {
@@ -98,24 +98,37 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Add a [Constraint] which results in a failure if the given predicate results in a false.
+     * Constraint appending a failure to the result when the given predicate returns false.
      */
-    infix fun Constraint.enforcing(predicate: ConstraintPredicate) {
-        addConstraint(this, predicate)
+    infix fun Constraint.enforcing(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> =
+        constraints + (this to predicate)
+
+    /**
+     * Constraint appending a failure to the result when the given block throws an exception.
+     */
+    infix fun Constraint.trying(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
+        constraints + (this to { runCatching { block() }.isSuccess })
+
+    /**
+     * Constraint that never appends a failure to the result.
+     */
+    infix fun Constraint.ignoring(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> {
+        constraints + (this to { true })
+        return this to predicate
     }
 
     /**
-     * Add a [Constraint] which results in is a failure if the given block throws an exception.
+     * Immediately executes the block if the added constraint is a success
      */
-    infix fun Constraint.trying(block: () -> Unit) {
-        addConstraint(this) { runCatching { block() }.isSuccess }
+    infix fun Pair<Constraint, ConstraintPredicate>.onPass(block: () -> Unit): Pair<Constraint, ConstraintPredicate> {
+        if (second()) block(); return this
     }
 
     /**
-     * Add a [Constraint] which will never result in a failure.
+     * Immediately executes the block if the added constraint is a failure
      */
-    infix fun Constraint.ignoring(block: () -> Unit) {
-        addConstraint(this) { block(); true }
+    infix fun Pair<Constraint, ConstraintPredicate>.onFail(block: () -> Unit): Pair<Constraint, ConstraintPredicate> {
+        if (!second()) block(); return this
     }
 
     private fun evaluateEagerly(): List<Constraint> =
@@ -127,8 +140,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
         constraints
             .firstOrNull { (_, predicate) -> !predicate() }
             .let { it?.first }
-
-    private fun addConstraint(constraint: Constraint, predicate: ConstraintPredicate) {
-        constraints.add(Pair(constraint, predicate))
-    }
 }
+
+private operator fun <A, B> MutableList<Pair<A, B>>.plus(constraint: Pair<A, B>) =
+    this.add(constraint).let { constraint }
