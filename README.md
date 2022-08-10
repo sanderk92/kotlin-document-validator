@@ -1,21 +1,40 @@
 # Kotlin Validator DSL
+
 An easy to use DSL for validating the content of any document.
 
 ## Instructions
 
 First we define an arbitrary `Document` class:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/ExampleDocument.kt#L3-L6
+```kotlin
+data class Document(
+    val owner: String,
+    val content: List<Int>,
+) 
+```
 
 ## Instantiate a validator
 
 Then we must instantiate a `Validator`:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/Instantiation.kt#L10-L12
+```kotlin
+fun validateEagerly(subject: Document): ValidationResult<List<String>> =
+
+    checkEagerly(subject) { document ->
+        // ...
+    }
+
+```
 
 <sup>*Returns all errors that occurred<sup>
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/Instantiation.kt#L16-L18
+```kotlin
+fun validateLazily(subject: Document): ValidationResult<String> =
+
+    checkLazily(subject) { document ->
+        // ...
+    }
+```
 
 <sup>*Returns the first error that occurred and skips evaluation of remaining predicates<sup>
 
@@ -25,25 +44,57 @@ https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce
 
 Properties can be enforced to fulfill a predicate:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L14-L16
+```kotlin
+checkEagerly(subject) { document ->
+    
+    "The owner field may not be empty" enforcing {
+        document.owner.isNotEmpty()
+    }
+}
+```
 
 ### Trying
 
 Properties can be checked for whether an operation on them will result in an exception:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L18-L20
+```kotlin
+checkEagerly(subject) { document ->
+    
+    "The owner field must be a valid UUID" trying {
+        UUID.fromString(document.owner)
+    }
+}
+```
 
 ### Ignoring
 
 Properties can be checked but the result ignored:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleBasics.kt#L22-L24
+```kotlin
+checkEagerly(subject) { document ->
+    
+    "The content field may not be empty" ignoring {
+        document.content.isEmpty()
+    }
+}
+```
 
 ### Peek
 
 A validation definition as described above can immediately have its result peeked on:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/2276f593c1bf4aa7fa738cfa40822c26e4102aed/src/main/kotlin/com/example/validations/VaildationExampleWithLogging.kt#L13-L19
+```kotlin
+checkEagerly(subject) { document ->
+    
+    "The content field may not be empty" enforcing {
+        document.content.isNotEmpty()
+    } onPass {
+        println("The content field was not empty!")
+    } onFail {
+        println("The content field was empty")
+    }
+}
+```
 
 <sup>*Adds an execution of the check for each peek<sup>
 
@@ -53,28 +104,103 @@ Property accessors allow us to structure our `Validator` and perform constraint 
 
 #### All properties
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleWithSubject.kt#L9-L19
+```kotlin
+checkEagerly(subject) { document ->
+    
+    checkSubject { (owner, content) ->
+    
+        "The owner field must not be empty or blank" enforcing {
+            owner.isNotBlank()
+        }
+    }
+}
+```
 
 #### Single property
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleWithSingleProperty.kt#L9-L19
+```kotlin
+checkEagerly(subject) { document ->
+    
+    checkProperty(Document::owner) { owner ->
+
+        "The owner field must be at minimum three characters" enforcing {
+            owner.length >= 3
+        }
+    }
+}
+```
 
 #### Iterable properties
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleWithIterableProperty.kt#L9-L19
+```kotlin
+checkEagerly(document) {
+
+    checkIterableProperty(Document::content) { element ->
+
+        "The content field must contain only positive values" enforcing {
+            element > 0
+        }
+    }
+}
+```
 
 #### Nested properties
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleWithNestedProperties.kt#L9-L22
+```kotlin
+checkEagerly(document) {
+
+    checkProperty(Document::owner) { owner ->
+
+        checkProperty(String::length) { length ->
+
+            "The owner field must not be longer than 10 characters" enforcing {
+                length <= 10
+            }
+        }
+    }
+}
+```
 
 ## Custom constraint types
 
 Property checks can be given additional failure context:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationExampleWithCustomConstraintType.kt#L12-L22
+```kotlin
+checkEagerly(document) {
+
+    checkProperty(Document::owner) { owner ->
+
+        Constraint("The owner field must not be empty or blank", ErrorCode.E001) enforcing {
+            owner.isNotBlank()
+        }
+    }
+}
+```
 
 ## Validation result
 
-A `ValidationResult` can be used in pattern matching and contains a few helper functions in case multiple results are returned:
+A `ValidationResult` can be used in pattern matching and contains a few helper functions in case multiple results are
+returned:
 
-https://github.com/sanderk92/kotlin-dsl-document-validator/blob/97c4563bbf8d2dce077eefc465e260038508d9da/src/main/kotlin/com/example/validations/ValidationResultUsage.kt#L8-L18
+```kotlin
+when (val result = getEagerValidationResult()) {
+    is Passed<*> -> {
+        println("Validation passed!")
+    }
+    is Failed<List<String>> -> {
+        println("Total errors: ${result.errors}" )
+        println("Total error count: ${result.errorCount}")
+        println("Unique errors: ${result.uniqueErrors}")
+        println("Unique error count ${result.uniqueErrorCount}")
+    }
+}
+```
+
+Or when a single result is returned:
+
+```kotlin
+when (val result = getLazyValidationResult()) {
+    is Passed<*> -> println("Validation passed!")
+    is Failed<String> -> println("Total errors: ${result.errors}")
+}
+```
