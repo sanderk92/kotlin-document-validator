@@ -1,4 +1,4 @@
-package com.example
+package com.validator.dto
 
 enum class ErrorCode {
     E001,

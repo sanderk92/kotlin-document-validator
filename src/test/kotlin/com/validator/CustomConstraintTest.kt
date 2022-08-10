@@ -1,14 +1,28 @@
-package com.example.validations
+package com.validator
 
-import com.example.Constraint
-import com.example.Document
-import com.example.ErrorCode
+import com.validator.dto.Constraint
+import com.validator.dto.Document
+import com.validator.dto.ErrorCode
 import com.validator.Failed
 import com.validator.Passed
+import com.validator.ValidationResult
+import com.validator.Validator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ValidationExampleWithCustomConstraintTypeTest {
+private fun validate(document: Document): ValidationResult<List<Constraint>> =
+
+    Validator.checkEagerly(document) {
+
+        checkProperty(Document::owner) { owner ->
+
+            Constraint("The owner field must not be empty or blank", ErrorCode.E001) enforcing {
+                owner.isNotBlank()
+            }
+        }
+    }
+
+class CustomConstraintTest {
 
     @Test
     fun `Valid documents pass`() {
@@ -17,7 +31,7 @@ class ValidationExampleWithCustomConstraintTypeTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleWithCustomConstraintType().validate(document)
+        val result = validate(document)
 
         assertThat(result).isExactlyInstanceOf(Passed::class.java)
     }
@@ -30,7 +44,7 @@ class ValidationExampleWithCustomConstraintTypeTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleWithCustomConstraintType().validate(document)
+        val result = validate(document)
 
         assertThat(result).isExactlyInstanceOf(Failed::class.java)
         assertThat((result as Failed).errors).containsExactlyInAnyOrder(

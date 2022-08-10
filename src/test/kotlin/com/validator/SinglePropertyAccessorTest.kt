@@ -1,13 +1,26 @@
-package com.example.validations
+package com.validator
 
-import com.example.Document
+import com.validator.dto.Document
 import com.validator.Failed
 import com.validator.Passed
-import org.assertj.core.api.Assertions
+import com.validator.ValidationResult
+import com.validator.Validator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ValidationExampleWithSinglePropertyTest {
+private fun validate(document: Document): ValidationResult<List<String>> =
+
+    Validator.checkEagerly(document) {
+
+        checkProperty(Document::owner) { owner ->
+
+            "The owner field must be at minimum three characters" enforcing {
+                owner.length >= 3
+            }
+        }
+    }
+
+class SinglePropertyAccessorTest {
 
     @Test
     fun `Valid documents are allowed`() {
@@ -16,7 +29,7 @@ class ValidationExampleWithSinglePropertyTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleWithSingleProperty().validate(document)
+        val result = validate(document)
 
         assertThat(result).isExactlyInstanceOf(Passed::class.java)
     }
@@ -28,7 +41,7 @@ class ValidationExampleWithSinglePropertyTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleWithSingleProperty().validate(document)
+        val result = validate(document)
 
         assertThat(result).isExactlyInstanceOf(Failed::class.java)
         assertThat((result as Failed).errors).containsExactlyInAnyOrder(

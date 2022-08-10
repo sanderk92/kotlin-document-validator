@@ -1,12 +1,29 @@
-package com.example.validations
+package com.validator
 
-import com.example.Document
+import com.validator.dto.Document
 import com.validator.Failed
 import com.validator.Passed
+import com.validator.ValidationResult
+import com.validator.Validator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ValidationExampleWithNestedPropertiesTest {
+private fun validate(document: Document): ValidationResult<List<String>> =
+
+    Validator.checkEagerly(document) {
+
+        checkProperty(Document::owner) {
+
+            checkProperty(String::length) { length ->
+
+                "The owner field must not be longer than 10 characters" enforcing {
+                    length <= 10
+                }
+            }
+        }
+    }
+
+class NestedPropertyAccessorTest {
 
     @Test
     fun `Valid documents are allowed`() {
@@ -15,7 +32,7 @@ class ValidationExampleWithNestedPropertiesTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleWithNestedProperties().validate(document)
+        val result = validate(document)
 
         assertThat(result).isExactlyInstanceOf(Passed::class.java)
     }
@@ -27,7 +44,7 @@ class ValidationExampleWithNestedPropertiesTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleWithNestedProperties().validate(document)
+        val result = validate(document)
 
         assertThat(result).isExactlyInstanceOf(Failed::class.java)
         assertThat((result as Failed).errors).containsExactlyInAnyOrder(

@@ -1,13 +1,28 @@
-package com.example.validations
+package com.validator
 
-import com.example.Document
-import com.validator.Failed
-import com.validator.Passed
+import com.validator.dto.Document
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class ValidationExampleBasicsTest {
+private fun validate(subject: Document): ValidationResult<List<String>> =
+
+    Validator.checkEagerly(subject) { document ->
+
+        "The owner field may not be empty" enforcing {
+            document.owner.isNotEmpty()
+        }
+
+        "The owner field must be a valid UUID" trying {
+            UUID.fromString(document.owner)
+        }
+
+        "The content field may not be empty" ignoring {
+            document.content.isEmpty()
+        }
+    }
+
+class ConstraintTest {
 
     @Test
     fun `Valid documents pass`() {
@@ -16,7 +31,7 @@ class ValidationExampleBasicsTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleBasics().validate(document)
+        val result = validate(document)
 
         Assertions.assertThat(result).isExactlyInstanceOf(Passed::class.java)
     }
@@ -28,7 +43,7 @@ class ValidationExampleBasicsTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleBasics().validate(document)
+        val result = validate(document)
 
         Assertions.assertThat(result).isExactlyInstanceOf(Failed::class.java)
         Assertions.assertThat((result as Failed).errors).containsExactlyInAnyOrder(
@@ -43,7 +58,7 @@ class ValidationExampleBasicsTest {
             content = emptyList(),
         )
 
-        val result = ValidationExampleBasics().validate(document)
+        val result = validate(document)
 
         Assertions.assertThat(result).isExactlyInstanceOf(Failed::class.java)
         Assertions.assertThat((result as Failed).errors).containsExactlyInAnyOrder(

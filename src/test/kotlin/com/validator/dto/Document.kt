@@ -1,4 +1,4 @@
-package com.example
+package com.validator.dto
 
 data class Document(
     val owner: String,
