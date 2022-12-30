@@ -1,20 +1,17 @@
 package com.validator
 
 import com.validator.dto.Document
-import com.validator.Failed
-import com.validator.Passed
-import com.validator.ValidationResult
-import com.validator.Validator
+import com.validator.Validator.Companion.validateEagerly
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private fun validate(document: Document): ValidationResult<List<String>> =
 
-    Validator.checkEagerly(document) {
+    document validateEagerly  {
 
-        checkProperty(Document::owner) {
+        Document::owner check {
 
-            checkProperty(String::length) { length ->
+            String::length check { length ->
 
                 "The owner field must not be longer than 10 characters" enforcing {
                     length <= 10

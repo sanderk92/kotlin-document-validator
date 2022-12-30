@@ -14,12 +14,11 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
          * Initializes an eager [Validator], which runs all checks and returns all failures that
          * occurred, including duplicates.
          */
-        fun <Subject : Any, Constraint : Any> checkEagerly(
-            subject: Subject,
+        infix fun <Subject : Any, Constraint : Any> Subject.validateEagerly(
             block: Validator<Subject, Constraint>.(Subject) -> Unit,
         ): ValidationResult<List<Constraint>> {
-            val validator = Validator<Subject, Constraint>(subject)
-            validator.block(subject)
+            val validator = Validator<Subject, Constraint>(this)
+            validator.block(this)
             val failures = validator.evaluateEagerly()
             return result(failures)
         }
@@ -37,12 +36,11 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
          * high time complexity, as it skips evaluation of remaining predicates when an error
          * occurred.
          */
-        fun <Subject : Any, Constraint : Any> checkLazily(
-            subject: Subject,
+        fun <Subject : Any, Constraint : Any> Subject.validateLazily(
             block: Validator<Subject, Constraint>.(Subject) -> Unit,
         ): ValidationResult<Constraint> {
-            val validator = Validator<Subject, Constraint>(subject)
-            validator.block(subject)
+            val validator = Validator<Subject, Constraint>(this)
+            validator.block(this)
             val failure = validator.evaluateLazily()
             return result(failure)
         }
@@ -56,26 +54,13 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     }
 
     /**
-     * Performs the constraint checks in the given block on the complete subject, which can
-     * optionally be destructured.
-     */
-    fun checkSubject(
-        block: Validator<Subject, Constraint>.(Subject) -> Unit,
-    ) {
-        val validator = Validator<Subject, Constraint>(subject)
-        validator.block(subject)
-        constraints += validator.constraints
-    }
-
-    /**
      * Performs the constraint checks in the given block on a single property of the current
      * subject.
      */
-    fun <Property> checkProperty(
-        property: KProperty1<Subject, Property>,
+    infix fun <Property> KProperty1<Subject, Property>.check(
         block: Validator<Property, Constraint>.(Property) -> Unit,
     ) {
-        property.get(subject).also {
+        this.get(subject).also {
             val validator = Validator<Property, Constraint>(it)
             validator.block(it)
             constraints += validator.constraints
@@ -86,11 +71,10 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
      * Performs the constraint checks in the given block on a single [Iterable] property of the
      * current subject. This allows performing checks as if a single value is validated.
      */
-    fun <Property> checkIterableProperty(
-        property: KProperty1<Subject, Iterable<Property>>,
+    infix fun <Property> KProperty1<Subject, Iterable<Property>>.checkEach(
         block: Validator<Property, Constraint>.(Property) -> Unit,
     ) {
-        property.get(subject).forEach {
+        this.get(subject).forEach {
             val validator = Validator<Property, Constraint>(it)
             validator.block(it)
             constraints += validator.constraints
@@ -116,19 +100,19 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
         constraints.addPair(this) { true }.let { this to predicate }
 
     private fun <A, B> MutableList<Pair<A, B>>.addPair(a: A, b: B): Pair<A, B> =
-        (a to b).also(::add)
+        (a to b).also(this::add)
 
     /**
      * Peeks a validation definition, immediately executing it and running the block if it passed.
      */
     infix fun Pair<Constraint, ConstraintPredicate>.onPass(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
-        also { if (second()) block() }
+        also { (_, predicate) -> if (predicate()) block() }
 
     /**
      * Peeks a validation definition, immediately executing it and running the block if it failed.
      */
     infix fun Pair<Constraint, ConstraintPredicate>.onFail(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
-        also { if (!second()) block() }
+        also { (_, predicate) -> if (!predicate()) block() }
 
     private fun evaluateEagerly(): List<Constraint> =
         constraints

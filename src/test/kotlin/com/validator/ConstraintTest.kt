@@ -1,24 +1,25 @@
 package com.validator
 
+import com.validator.Validator.Companion.validateEagerly
 import com.validator.dto.Document
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 
-private fun validate(subject: Document): ValidationResult<List<String>> =
+private fun validate(document: Document): ValidationResult<List<String>> =
 
-    Validator.checkEagerly(subject) { document ->
+    document validateEagerly  { subject ->
 
         "The owner field may not be empty" enforcing {
-            document.owner.isNotEmpty()
+            subject.owner.isNotEmpty()
         }
 
         "The owner field must be a valid UUID" trying {
-            UUID.fromString(document.owner)
+            UUID.fromString(subject.owner)
         }
 
         "The content field may not be empty" ignoring {
-            document.content.isEmpty()
+            subject.content.isEmpty()
         }
     }
 

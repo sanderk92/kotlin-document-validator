@@ -18,9 +18,9 @@ data class Document(
 Then we must instantiate a `Validator`:
 
 ```kotlin
-fun validateEagerly(subject: Document): ValidationResult<List<String>> =
+fun validateEagerly(document: Document): ValidationResult<List<String>> =
 
-    checkEagerly(subject) { document ->
+    document validateEagerly { subject ->
         // ...
     }
 
@@ -29,9 +29,9 @@ fun validateEagerly(subject: Document): ValidationResult<List<String>> =
 <sup>*Returns all errors that occurred<sup>
 
 ```kotlin
-fun validateLazily(subject: Document): ValidationResult<String> =
+fun validateLazily(document: Document): ValidationResult<String> =
 
-    checkLazily(subject) { document ->
+    document validateLazily { subject ->
         // ...
     }
 ```
@@ -45,10 +45,10 @@ fun validateLazily(subject: Document): ValidationResult<String> =
 Properties can be enforced to fulfill a predicate:
 
 ```kotlin
-checkEagerly(subject) { document ->
+document validateEagerly { subject ->
     
     "The owner field may not be empty" enforcing {
-        document.owner.isNotEmpty()
+        subject.owner.isNotEmpty()
     }
 }
 ```
@@ -58,10 +58,10 @@ checkEagerly(subject) { document ->
 Properties can be checked for whether an operation on them will result in an exception:
 
 ```kotlin
-checkEagerly(subject) { document ->
+document validateEagerly { subject ->
     
     "The owner field must be a valid UUID" trying {
-        UUID.fromString(document.owner)
+        UUID.fromString(subject.owner)
     }
 }
 ```
@@ -71,10 +71,10 @@ checkEagerly(subject) { document ->
 Properties can be checked but the result ignored:
 
 ```kotlin
-checkEagerly(subject) { document ->
+document validateEagerly { subject ->
     
     "The content field may not be empty" ignoring {
-        document.content.isEmpty()
+        subject.content.isEmpty()
     }
 }
 ```
@@ -84,10 +84,10 @@ checkEagerly(subject) { document ->
 A validation definition as described above can immediately have its result peeked on:
 
 ```kotlin
-checkEagerly(subject) { document ->
+document validateEagerly { subject ->
     
     "The content field may not be empty" enforcing {
-        document.content.isNotEmpty()
+        subject.content.isNotEmpty()
     } onPass {
         println("The content field was not empty!")
     } onFail {
@@ -102,26 +102,12 @@ checkEagerly(subject) { document ->
 
 Property accessors allow us to structure our `Validator` and perform constraint checks on specific properties:
 
-#### All properties
-
-```kotlin
-checkEagerly(subject) { document ->
-    
-    checkSubject { (owner, content) ->
-    
-        "The owner field must not be empty or blank" enforcing {
-            owner.isNotBlank()
-        }
-    }
-}
-```
-
 #### Single property
 
 ```kotlin
-checkEagerly(subject) { document ->
+document validateEagerly {
     
-    checkProperty(Document::owner) { owner ->
+    Document::owner check { owner ->
 
         "The owner field must be at minimum three characters" enforcing {
             owner.length >= 3
@@ -133,9 +119,9 @@ checkEagerly(subject) { document ->
 #### Iterable properties
 
 ```kotlin
-checkEagerly(document) {
+document validateEagerly {
 
-    checkIterableProperty(Document::content) { element ->
+     Document::content checkEach { element ->
 
         "The content field must contain only positive values" enforcing {
             element > 0
@@ -147,11 +133,11 @@ checkEagerly(document) {
 #### Nested properties
 
 ```kotlin
-checkEagerly(document) {
+document validateEagerly {
 
-    checkProperty(Document::owner) { owner ->
+    Document::owner check { owner ->
 
-        checkProperty(String::length) { length ->
+        String::length check { length ->
 
             "The owner field must not be longer than 10 characters" enforcing {
                 length <= 10
@@ -166,9 +152,9 @@ checkEagerly(document) {
 Property checks can be given additional failure context:
 
 ```kotlin
-checkEagerly(document) {
+document validateEagerly {
 
-    checkProperty(Document::owner) { owner ->
+    Document::owner check { owner ->
 
         Constraint("The owner field must not be empty or blank", ErrorCode.E001) enforcing {
             owner.isNotBlank()
