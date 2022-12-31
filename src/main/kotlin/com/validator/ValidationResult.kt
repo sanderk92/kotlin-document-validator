@@ -1,14 +1,15 @@
 package com.validator
 
-sealed interface ValidationResult<Result>
-class Passed<Result> : ValidationResult<Result>
-data class Failed<Result: Any>(val errors: Result) : ValidationResult<Result>
+sealed class ValidationResult<out Error, out Subject> {
+    data class Passed<Subject>(val value: Subject) : ValidationResult<Nothing, Subject>()
+    data class Failed<Error>(val errors: Error) : ValidationResult<Error, Nothing>()
+}
 
-val <Result> Failed<List<Result>>.errorCount: Int
+val <Subject> ValidationResult.Failed<List<Subject>>.errorCount: Int
     get() = this.errors.size
 
-val <Result> Failed<List<Result>>.uniqueErrors: Set<Result>
+val <Subject> ValidationResult.Failed<List<Subject>>.uniqueErrors: Set<Subject>
     get() = this.errors.toSet()
 
-val <Result> Failed<List<Result>>.uniqueErrorCount: Int
+val <Subject> ValidationResult.Failed<List<Subject>>.uniqueErrorCount: Int
     get() = this.errors.toSet().size

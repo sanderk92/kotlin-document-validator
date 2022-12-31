@@ -5,10 +5,12 @@ import com.validator.dto.Document
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import com.validator.ValidationResult.Failed
+import com.validator.ValidationResult.Passed
 
 private var value = 0
 
-private fun validate(document: Document): ValidationResult<List<String>> =
+private fun validate(document: Document): ValidationResult<List<String>, Document> =
 
     document validate { (owner, _) ->
 

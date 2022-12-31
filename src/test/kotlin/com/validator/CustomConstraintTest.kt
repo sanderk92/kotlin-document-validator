@@ -6,8 +6,10 @@ import com.validator.dto.Document
 import com.validator.dto.ErrorCode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import com.validator.ValidationResult.Failed
+import com.validator.ValidationResult.Passed
 
-private fun validate(document: Document): ValidationResult<List<Constraint>> =
+private fun validate(document: Document): ValidationResult<List<Constraint>, Document> =
 
     document validate {
 

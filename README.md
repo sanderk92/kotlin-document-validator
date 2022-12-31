@@ -18,7 +18,7 @@ data class Document(
 Then we must instantiate a `Validator`:
 
 ```kotlin
-fun validate(document: Document): ValidationResult<List<String>> =
+fun validate(document: Document): ValidationResult<List<String>, Document> =
 
     document validate { subject ->
         // ...
@@ -29,7 +29,7 @@ fun validate(document: Document): ValidationResult<List<String>> =
 <sup>*Returns all errors that occur during validation of the document.<sup>
 
 ```kotlin
-fun validateLazily(document: Document): ValidationResult<String> =
+fun validateLazily(document: Document): ValidationResult<String, Document> =
 
     document validateLazily { subject ->
         // ...
@@ -190,9 +190,9 @@ A `ValidationResult` can be used in pattern matching and contains a few helper f
 returned:
 
 ```kotlin
-when (val result = getEagerValidationResult()) {
-    is Passed<*> -> {
-        println("Validation passed!")
+when (val result = validate(document)) {
+    is Passed<Document> -> {
+        println("Validation passed: ${result.value}!")
     }
     is Failed<List<String>> -> {
         println("Total errors: ${result.errors}" )
@@ -206,8 +206,8 @@ when (val result = getEagerValidationResult()) {
 Or when a single result is returned:
 
 ```kotlin
-when (val result = getLazyValidationResult()) {
-    is Passed<*> -> println("Validation passed!")
-    is Failed<String> -> println("Total errors: ${result.errors}")
+when (val result = validate(document)) {
+    is Passed<Document> -> println("Validation passed: ${result.value}!")
+    is Failed<String> -> println("Validation failed: ${result.errors}!")
 }
 ```

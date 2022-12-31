@@ -16,18 +16,22 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
          */
         infix fun <Subject : Any, Constraint : Any> Subject.validate(
             block: Validator<Subject, Constraint>.(Subject) -> Unit,
-        ): ValidationResult<List<Constraint>> {
+        ): ValidationResult<List<Constraint>, Subject> {
             val validator = Validator<Subject, Constraint>(this)
             validator.block(this)
             val failures = validator.evaluateEagerly()
-            return result(failures)
+            val subject = validator.getSubject()
+            return result(failures, subject)
         }
 
-        private fun <Constraint : Any> result(failures: List<Constraint>): ValidationResult<List<Constraint>> =
+        private fun <Constraint : Any, Subject> result(
+            failures: List<Constraint>,
+            subject: Subject
+        ): ValidationResult<List<Constraint>, Subject> =
             if (failures.isNotEmpty()) {
-                Failed(failures)
+                ValidationResult.Failed(failures)
             } else {
-                Passed()
+                ValidationResult.Passed(subject)
             }
 
         /**
@@ -38,18 +42,22 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
          */
         fun <Subject : Any, Constraint : Any> Subject.validateLazily(
             block: Validator<Subject, Constraint>.(Subject) -> Unit,
-        ): ValidationResult<Constraint> {
+        ): ValidationResult<Constraint, Subject> {
             val validator = Validator<Subject, Constraint>(this)
             validator.block(this)
             val failure = validator.evaluateLazily()
-            return result(failure)
+            val subject = validator.getSubject()
+            return result(failure, subject)
         }
 
-        private fun <Constraint : Any> result(failure: Constraint?): ValidationResult<Constraint> =
+        private fun <Constraint : Any, Subject> result(
+            failure: Constraint?,
+            subject: Subject
+        ): ValidationResult<Constraint, Subject> =
             if (failure != null) {
-                Failed(failure)
+                ValidationResult.Failed(failure)
             } else {
-                Passed()
+                ValidationResult.Passed(subject)
             }
     }
 
@@ -122,6 +130,8 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
      */
     infix fun Boolean.ifFalse(block: () -> Unit): Boolean =
         also { if (!this) block() }
+
+    private fun getSubject() = subject
 
     private fun evaluateEagerly(): List<Constraint> =
         constraints
