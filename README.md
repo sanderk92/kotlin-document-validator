@@ -79,9 +79,9 @@ document validateEagerly { subject ->
 }
 ```
 
-### Peek
+## Peek
 
-A validation definition as described above can immediately have its result peeked on:
+A validation definition as described above can conditionally be executed
 
 ```kotlin
 document validateEagerly { subject ->
@@ -92,6 +92,27 @@ document validateEagerly { subject ->
         println("The content field was not empty!")
     } onFail {
         println("The content field was empty")
+    }
+}
+```
+
+## Conditional
+
+A validation definition as described above can immediately have its result peeked on:
+
+```kotlin
+document validateEagerly { (owner, content) ->
+
+    content.isEmpty() ifTrue  {
+        "Owner may not be empty if content is" enforcing {
+            owner.isNotBlank()
+        }
+    }
+
+    content.isEmpty() ifFalse {
+        "Owner Frank may not have content" enforcing {
+            owner != "Frank"
+        }
     }
 }
 ```
@@ -135,7 +156,7 @@ document validateEagerly {
 ```kotlin
 document validateEagerly {
 
-    Document::owner check { owner ->
+    Document::owner check {
 
         String::length check { length ->
 

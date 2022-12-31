@@ -99,9 +99,6 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     infix fun Constraint.ignoring(predicate: ConstraintPredicate): Pair<Constraint, ConstraintPredicate> =
         constraints.addPair(this) { true }.let { this to predicate }
 
-    private fun <A, B> MutableList<Pair<A, B>>.addPair(a: A, b: B): Pair<A, B> =
-        (a to b).also(this::add)
-
     /**
      * Peeks a validation definition, immediately executing it and running the block if it passed.
      */
@@ -114,6 +111,18 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
     infix fun Pair<Constraint, ConstraintPredicate>.onFail(block: () -> Unit): Pair<Constraint, ConstraintPredicate> =
         also { (_, predicate) -> if (!predicate()) block() }
 
+    /**
+     * Execute the following code block only if the [Boolean] which it is called on holds true
+     */
+    infix fun Boolean.ifTrue(block: () -> Unit): Boolean =
+        also { if (this) block() }
+
+    /**
+     * Execute the following code block only if the [Boolean] which it is called on holds false
+     */
+    infix fun Boolean.ifFalse(block: () -> Unit): Boolean =
+        also { if (!this) block() }
+
     private fun evaluateEagerly(): List<Constraint> =
         constraints
             .filter { (_, predicate) -> !predicate() }
@@ -125,3 +134,5 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
             .let { it?.first }
 }
 
+private fun <A, B> MutableList<Pair<A, B>>.addPair(a: A, b: B): Pair<A, B> =
+    (a to b).also(this::add)
