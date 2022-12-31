@@ -203,7 +203,7 @@ when (val result = validate(document)) {
 }
 ```
 
-Or when a single result is returned:
+Or when a lazy validation is performed:
 
 ```kotlin
 when (val result = validate(document)) {
