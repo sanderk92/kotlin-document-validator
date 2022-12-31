@@ -4,7 +4,7 @@ import kotlin.reflect.KProperty1
 
 private typealias ConstraintPredicate = () -> Boolean
 
-class Validator<Subject, Constraint : Any> private constructor(private val subject: Subject) {
+class Validator<Subject, Constraint : Any> private constructor(val subject: Subject) {
 
     private val constraints = mutableListOf<Pair<Constraint, ConstraintPredicate>>()
 
@@ -20,8 +20,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
             val validator = Validator<Subject, Constraint>(this)
             validator.block(this)
             val failures = validator.evaluateEagerly()
-            val subject = validator.getSubject()
-            return result(failures, subject)
+            return result(failures, validator.subject)
         }
 
         private fun <Constraint : Any, Subject> result(
@@ -46,8 +45,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
             val validator = Validator<Subject, Constraint>(this)
             validator.block(this)
             val failure = validator.evaluateLazily()
-            val subject = validator.getSubject()
-            return result(failure, subject)
+            return result(failure, validator.subject)
         }
 
         private fun <Constraint : Any, Subject> result(
@@ -130,8 +128,6 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
      */
     infix fun Boolean.ifFalse(block: () -> Unit): Boolean =
         also { if (!this) block() }
-
-    private fun getSubject() = subject
 
     private fun evaluateEagerly(): List<Constraint> =
         constraints
