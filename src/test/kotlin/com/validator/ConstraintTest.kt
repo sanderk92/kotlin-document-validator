@@ -1,15 +1,14 @@
 package com.validator
 
-import com.validator.Validator.Companion.validateEagerly
+import com.validator.Validator.Companion.validate
 import com.validator.dto.Document
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.*
 
 private fun validate(document: Document): ValidationResult<List<String>> =
 
-    document validateEagerly  { subject ->
+    document validate  { subject ->
 
         "The owner field may not be empty" enforcing {
             subject.owner.isNotEmpty()

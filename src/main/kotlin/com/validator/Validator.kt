@@ -14,7 +14,7 @@ class Validator<Subject, Constraint : Any> private constructor(private val subje
          * Initializes an eager [Validator], which runs all checks and returns all failures that
          * occurred, including duplicates.
          */
-        infix fun <Subject : Any, Constraint : Any> Subject.validateEagerly(
+        infix fun <Subject : Any, Constraint : Any> Subject.validate(
             block: Validator<Subject, Constraint>.(Subject) -> Unit,
         ): ValidationResult<List<Constraint>> {
             val validator = Validator<Subject, Constraint>(this)

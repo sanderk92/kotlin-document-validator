@@ -1,13 +1,13 @@
 package com.validator
 
+import com.validator.Validator.Companion.validate
 import com.validator.dto.Document
-import com.validator.Validator.Companion.validateEagerly
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private fun validate(document: Document): ValidationResult<List<String>> =
 
-    document validateEagerly  {
+    document validate  {
 
         Document::owner check {
 

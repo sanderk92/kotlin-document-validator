@@ -1,6 +1,6 @@
 package com.validator
 
-import com.validator.Validator.Companion.validateEagerly
+import com.validator.Validator.Companion.validate
 import com.validator.dto.Document
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -10,7 +10,7 @@ private var value = 0
 
 private fun validate(document: Document): ValidationResult<List<String>> =
 
-    document validateEagerly { (owner, _) ->
+    document validate { (owner, _) ->
 
         "Owner may not be empty" enforcing {
             owner.isNotBlank()

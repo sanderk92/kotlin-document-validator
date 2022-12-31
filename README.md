@@ -18,15 +18,15 @@ data class Document(
 Then we must instantiate a `Validator`:
 
 ```kotlin
-fun validateEagerly(document: Document): ValidationResult<List<String>> =
+fun validate(document: Document): ValidationResult<List<String>> =
 
-    document validateEagerly { subject ->
+    document validate { subject ->
         // ...
     }
 
 ```
 
-<sup>*Returns all errors that occurred<sup>
+<sup>*Returns all errors that occur during validation of the document.<sup>
 
 ```kotlin
 fun validateLazily(document: Document): ValidationResult<String> =
@@ -36,7 +36,7 @@ fun validateLazily(document: Document): ValidationResult<String> =
     }
 ```
 
-<sup>*Returns the first error that occurred and skips evaluation of remaining predicates<sup>
+<sup>*Returns the first error that occurs and skips evaluation of remaining predicates.<sup>
 
 ## Validation definition
 
@@ -45,7 +45,7 @@ fun validateLazily(document: Document): ValidationResult<String> =
 Properties can be enforced to fulfill a predicate:
 
 ```kotlin
-document validateEagerly { subject ->
+document validate { subject ->
     
     "The owner field may not be empty" enforcing {
         subject.owner.isNotEmpty()
@@ -58,7 +58,7 @@ document validateEagerly { subject ->
 Properties can be checked for whether an operation on them will result in an exception:
 
 ```kotlin
-document validateEagerly { subject ->
+document validate { subject ->
     
     "The owner field must be a valid UUID" trying {
         UUID.fromString(subject.owner)
@@ -71,7 +71,7 @@ document validateEagerly { subject ->
 Properties can be checked but the result ignored:
 
 ```kotlin
-document validateEagerly { subject ->
+document validate { subject ->
     
     "The content field may not be empty" ignoring {
         subject.content.isEmpty()
@@ -81,10 +81,10 @@ document validateEagerly { subject ->
 
 ## Peek
 
-A validation definition as described above can conditionally be executed
+A validation definition as described above can immediately have its result peeked on:
 
 ```kotlin
-document validateEagerly { subject ->
+document validate { subject ->
     
     "The content field may not be empty" enforcing {
         subject.content.isNotEmpty()
@@ -98,10 +98,10 @@ document validateEagerly { subject ->
 
 ## Conditional
 
-A validation definition as described above can immediately have its result peeked on:
+A validation definition as described above can conditionally be executed
 
 ```kotlin
-document validateEagerly { (owner, content) ->
+document validate { (owner, content) ->
 
     content.isEmpty() ifTrue  {
         "Owner may not be empty if content is" enforcing {
@@ -126,7 +126,7 @@ Property accessors allow us to structure our `Validator` and perform constraint 
 #### Single property
 
 ```kotlin
-document validateEagerly {
+document validate {
     
     Document::owner check { owner ->
 
@@ -140,7 +140,7 @@ document validateEagerly {
 #### Iterable properties
 
 ```kotlin
-document validateEagerly {
+document validate {
 
      Document::content checkEach { element ->
 
@@ -154,7 +154,7 @@ document validateEagerly {
 #### Nested properties
 
 ```kotlin
-document validateEagerly {
+document validate {
 
     Document::owner check {
 
@@ -173,7 +173,7 @@ document validateEagerly {
 Property checks can be given additional failure context:
 
 ```kotlin
-document validateEagerly {
+document validate {
 
     Document::owner check { owner ->
 
