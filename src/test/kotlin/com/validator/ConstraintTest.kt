@@ -3,6 +3,7 @@ package com.validator
 import com.validator.Validator.Companion.validateEagerly
 import com.validator.dto.Document
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -34,7 +35,7 @@ class ConstraintTest {
 
         val result = validate(document)
 
-        Assertions.assertThat(result).isExactlyInstanceOf(Passed::class.java)
+        assertThat(result).isExactlyInstanceOf(Passed::class.java)
     }
 
     @Test
@@ -46,8 +47,8 @@ class ConstraintTest {
 
         val result = validate(document)
 
-        Assertions.assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        Assertions.assertThat((result as Failed).errors).containsExactlyInAnyOrder(
+        assertThat(result).isExactlyInstanceOf(Failed::class.java)
+        assertThat((result as Failed).errors).containsExactlyInAnyOrder(
             "The owner field must be a valid UUID"
         )
     }
@@ -61,8 +62,8 @@ class ConstraintTest {
 
         val result = validate(document)
 
-        Assertions.assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        Assertions.assertThat((result as Failed).errors).containsExactlyInAnyOrder(
+        assertThat(result).isExactlyInstanceOf(Failed::class.java)
+        assertThat((result as Failed).errors).containsExactlyInAnyOrder(
             "The owner field may not be empty",
             "The owner field must be a valid UUID",
         )

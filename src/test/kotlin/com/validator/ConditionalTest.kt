@@ -3,6 +3,7 @@ package com.validator
 import com.validator.Validator.Companion.validateEagerly
 import com.validator.dto.Document
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 private fun validate(document: Document): ValidationResult<List<String>> =
@@ -36,7 +37,7 @@ class ConditionalTest {
 
         val result = validate(document)
 
-        Assertions.assertThat(result).isExactlyInstanceOf(Passed::class.java)
+        assertThat(result).isExactlyInstanceOf(Passed::class.java)
     }
 
     @Test
@@ -48,8 +49,8 @@ class ConditionalTest {
 
         val result = validate(document)
 
-        Assertions.assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        Assertions.assertThat((result as Failed).errors).containsExactlyInAnyOrder(
+        assertThat(result).isExactlyInstanceOf(Failed::class.java)
+        assertThat((result as Failed).errors).containsExactlyInAnyOrder(
             "Owner may not be empty if content is"
         )
     }
@@ -63,8 +64,8 @@ class ConditionalTest {
 
         val result = validate(document)
 
-        Assertions.assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        Assertions.assertThat((result as Failed).errors).containsExactlyInAnyOrder(
+        assertThat(result).isExactlyInstanceOf(Failed::class.java)
+        assertThat((result as Failed).errors).containsExactlyInAnyOrder(
             "Owner Frank may not have content"
         )
     }
