@@ -100,6 +100,8 @@ document validate { subject ->
 
 A validation definition as described above can conditionally be executed
 
+<sup>*Adds an execution of the check for each peek<sup>
+
 ```kotlin
 document validate { (owner, content) ->
 
@@ -116,8 +118,6 @@ document validate { (owner, content) ->
     }
 }
 ```
-
-<sup>*Adds an execution of the check for each peek<sup>
 
 ## Property accessors
 
