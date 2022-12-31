@@ -186,8 +186,7 @@ document validate {
 
 ## Validation result
 
-A `ValidationResult` can be used in pattern matching and contains a few helper functions in case multiple results are
-returned:
+A `ValidationResult` contains a few helper functions to help you process the results, i.e.:
 
 ```kotlin
 when (val result = validate(document)) {
