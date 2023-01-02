@@ -120,14 +120,8 @@ class Validator<Subject, Constraint : Any> private constructor(val subject: Subj
     /**
      * Execute the following code block only if the [Boolean] which it is called on holds true
      */
-    infix fun Boolean.ifTrue(block: () -> Unit): Boolean =
+    infix fun Boolean.then(block: () -> Unit): Boolean =
         also { if (this) block() }
-
-    /**
-     * Execute the following code block only if the [Boolean] which it is called on holds false
-     */
-    infix fun Boolean.ifFalse(block: () -> Unit): Boolean =
-        also { if (!this) block() }
 
     private fun evaluateEagerly(): List<Constraint> =
         constraints

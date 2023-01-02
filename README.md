@@ -105,15 +105,9 @@ A validation definition as described above can conditionally be executed
 ```kotlin
 document validate { (owner, content) ->
 
-    content.isEmpty() ifTrue  {
+    content.isEmpty() then  {
         "Owner may not be empty if content is" enforcing {
             owner.isNotBlank()
-        }
-    }
-
-    content.isEmpty() ifFalse {
-        "Owner Frank may not have content" enforcing {
-            owner != "Frank"
         }
     }
 }

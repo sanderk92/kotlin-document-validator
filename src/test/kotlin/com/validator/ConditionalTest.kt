@@ -11,17 +11,10 @@ private fun validate(document: Document): ValidationResult<List<String>, Documen
 
     document validate { (owner, content) ->
 
-        content.isEmpty() ifTrue  {
+        content.isEmpty() then {
 
             "Owner may not be empty if content is" enforcing {
                 owner.isNotBlank()
-            }
-        }
-
-        content.isEmpty() ifFalse {
-
-            "Owner Frank may not have content" enforcing {
-                owner != "Frank"
             }
         }
     }
@@ -53,21 +46,6 @@ class ConditionalTest {
         assertThat(result).isExactlyInstanceOf(Failed::class.java)
         assertThat((result as Failed).errors).containsExactlyInAnyOrder(
             "Owner may not be empty if content is"
-        )
-    }
-
-    @Test
-    fun `Owner frank may not have content`() {
-        val document = Document(
-            owner = "Frank",
-            content = listOf(1),
-        )
-
-        val result = validate(document)
-
-        assertThat(result).isExactlyInstanceOf(Failed::class.java)
-        assertThat((result as Failed).errors).containsExactlyInAnyOrder(
-            "Owner Frank may not have content"
         )
     }
 }
