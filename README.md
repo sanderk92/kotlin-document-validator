@@ -96,11 +96,11 @@ document validate { subject ->
 }
 ```
 
+<sup>*Adds an execution of the check for each peek<sup>
+
 ## Conditional
 
 A validation definition as described above can conditionally be executed
-
-<sup>*Adds an execution of the check for each peek<sup>
 
 ```kotlin
 document validate { (owner, content) ->
