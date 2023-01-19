@@ -77,7 +77,7 @@ class Validator<Subject, Constraint : Any> private constructor(val subject: Subj
      * Performs the constraint checks in the given block on a single [Iterable] property of the
      * current subject. This allows performing checks as if a single value is validated.
      */
-    infix fun <Property> KProperty1<Subject, Iterable<Property>>.checkEach(
+    infix fun <Property> KProperty1<Subject, Iterable<Property>>.onEach(
         block: Validator<Property, Constraint>.(Property) -> Unit,
     ) {
         this.get(subject).forEach {
